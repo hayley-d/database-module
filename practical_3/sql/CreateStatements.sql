@@ -35,7 +35,7 @@ CREATE SEQUENCE seq_province_id START WITH 5001 INCREMENT BY 1;
 -- Base Employee
 CREATE TABLE employee (
   employee_id BIGINT PRIMARY KEY DEFAULT nextval('seq_employee_id'),
-  employee_number employee_number,
+  employee_number employee_number UNIQUE,
   full_name person_name NOT NULL,
   date_of_birth DATE NOT NULL,
   contract_code contract_code NOT NULL,
@@ -45,12 +45,14 @@ CREATE TABLE employee (
 
 -- Full-Time Employee is-a employee
 CREATE TABLE full_time_employee (
-  provincial_registration provincial_code ARRAY NOT NULL
+  provincial_registration provincial_code ARRAY NOT NULL,
+  PRIMARY KEY (employee_id)
 ) INHERITS (employee);
 
 -- Part-Time Employee is-a employee
 CREATE TABLE part_time_employee (
-  mentor mentor_name NOT NULL
+  mentor person_name NOT NULL,
+  PRIMARY KEY (employee_id)
 ) INHERITS (employee);
 
 -- Contract
