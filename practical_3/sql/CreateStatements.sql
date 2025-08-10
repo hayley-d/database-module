@@ -36,8 +36,6 @@ CREATE TYPE mentor_name AS (
 
 -- Sequences
 CREATE SEQUENCE seq_employee_id START WITH 1001 INCREMENT BY 1;
-CREATE SEQUENCE seq_fulltime_employee_id START WITH 2001 INCREMENT BY 1;
-CREATE SEQUENCE seq_parttime_employee_id START WITH 3001 INCREMENT BY 1;
 CREATE SEQUENCE seq_contract_id START WITH 4001 INCREMENT BY 1;
 CREATE SEQUENCE seq_province_id START WITH 5001 INCREMENT BY 1;
 
@@ -53,29 +51,27 @@ CREATE TABLE employee (
 
 -- Full-Time Employee is-a employee
 CREATE TABLE full_time_employee (
-  id BIGINT PRIMARY KEY DEFAULT nextval('seq_fulltime_employee_id'),
   provincialRegistration provincial_code ARRAY NOT NULL
 ) INHERITS (employee);
 
 -- Part-Time Employee is-a employee
 CREATE TABLE part_time_employee (
-  id BIGINT PRIMARY KEY DEFAULT nextval('seq_parttime_employee_id'),
   mentor mentor_name NOT NULL
 ) INHERITS (employee);
 
 -- Contract
 CREATE TABLE contract (
   id BIGINT PRIMARY KEY DEFAULT nextval('seq_contract_id'),
-  contract_code VARCHAR(7) UNIQUE NOT NULL,
+  contract_code contract_code UNIQUE NOT NULL,
   contract_type contract_type NOT NULL,
-  years INT NOT NULL CHECK (years > 0)
+  number_of_years SMALLINT NOT NULL CHECK (years > 0)
 );
 
 -- Province
 CREATE TABLE province (
   id BIGINT PRIMARY KEY DEFAULT nextval('seq_province_id'),
-  code provincial_code UNIQUE NOT NULL,
-  name VARCHAR(50) NOT NULL,
+  provincial_code provincial_code UNIQUE NOT NULL,
+  provincial_name VARCHAR(50) NOT NULL,
   department VARCHAR(50) NOT NULL
 );
 
@@ -135,7 +131,7 @@ RETURNS BOOLEAN AS $$
   SELECT pcode = ANY(fte.provincialRegistration);
 $$ LANGUAGE sql;
 
--- 4) durationOfEmployment(hire_year year_yyyy) -> text like '5 years'
+-- 4) durationOfEmployment(hire_year year) -> text like '5 years'
 CREATE OR REPLACE FUNCTION durationOfEmployment(hire_year year)
 RETURNS TEXT AS $$
   SELECT (EXTRACT(YEAR FROM current_date)::INT - hire_year)::INT || ' years';
@@ -158,7 +154,7 @@ RETURNS TEXT AS $$
 $$ LANGUAGE sql;
 
 CREATE INDEX idx_employee_emp_no ON employee(id);
-CREATE INDEX idx_employee_contract_code ON employee(contract_code);
-CREATE INDEX idx_province_code ON province(code);
+CREATE INDEX idx_employee_contract_code ON employee(id);
+CREATE INDEX idx_province_code ON province(id);
 
 
