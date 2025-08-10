@@ -1,10 +1,15 @@
 -- 6 digit employee number
-CREATE DOMAIN employee_number AS VARCHAR(6) 
-  CONSTRAINT CHECK (VALUE IS NOT NULL AND VALUE ~ '^[0-9]{6}$');
+CREATE DOMAIN employee_number AS VARCHAR(6)
+  NOT NULL
+  CHECK (VALUE ~ '^[0-9]{6}$');
 
 -- Year as YYYY
 CREATE DOMAIN year AS SMALLINT 
-  CHECK (VALUE BETWEEN 1900 AND 2100);
+  CHECK (VALUE BETWEEN 1900 AND 2025);
+
+-- Contract code ABC 123
+CREATE DOMAIN contract_code AS VARCHAR(7)
+  CHECK (VALUE ~ '^[A-Z]{3} [0-9]{3}$');
 
 -- Provincial code enum
 CREATE TYPE provincial_code AS ENUM ('GP','MP','NW','FS','KZN','CA','EC','NC', 'LP');
@@ -39,17 +44,17 @@ CREATE SEQUENCE seq_province_id START WITH 5001 INCREMENT BY 1;
 -- Base Employee
 CREATE TABLE employee (
   id BIGINT PRIMARY KEY DEFAULT nextval('seq_employee_id'),
-  employee_number employee_number NOT NULL,
+  employee_number employee_number,
   full_name person_name NOT NULL,
   date_of_birth DATE NOT NULL,
   contract_code VARCHAR(10) NOT NULL,
-  year_hired year_yyyy NOT NULL
+  year_hired year NOT NULL
 );
 
 -- Full-Time Employee is-a employee
 CREATE TABLE full_time_employee (
   id BIGINT PRIMARY KEY DEFAULT nextval('seq_fulltime_employee_id'),
-  provincialRegistration provincial_code[] NOT NULL
+  provincialRegistration provincial_code ARRAY NOT NULL
 ) INHERITS (employee);
 
 -- Part-Time Employee is-a employee
@@ -61,8 +66,8 @@ CREATE TABLE part_time_employee (
 -- Contract
 CREATE TABLE contract (
   id BIGINT PRIMARY KEY DEFAULT nextval('seq_contract_id'),
-  contract_code  VARCHAR(7) UNIQUE NOT NULL,
-  contract_type  contract_type NOT NULL,
+  contract_code VARCHAR(7) UNIQUE NOT NULL,
+  contract_type contract_type NOT NULL,
   years INT NOT NULL CHECK (years > 0)
 );
 
