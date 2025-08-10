@@ -1,14 +1,13 @@
 -- 6 digit employee number
-CREATE DOMAIN employee_number AS CHAR(6)
-  CHECK (VALUE ~ '^[0-9]{6}$');
-
--- Two letter provincial code
-CREATE DOMAIN provincial_code AS CHAR(2)
-  CHECK (VALUE ~ '^[A-Z]{2}$');
+CREATE DOMAIN employee_number AS VARCHAR(6) 
+  CONSTRAINT CHECK (VALUE IS NOT NULL AND VALUE ~ '^[0-9]{6}$');
 
 -- Year as YYYY
-CREATE DOMAIN year AS INT
+CREATE DOMAIN year AS SMALLINT 
   CHECK (VALUE BETWEEN 1900 AND 2100);
+
+-- Provincial code enum
+CREATE TYPE provincial_code AS ENUM ('GP','MP','NW','FS','KZN','CA','EC','NC', 'LP');
 
 -- Title enum
 CREATE TYPE title AS ENUM ('Ms','Mev','Miss','Mrs','Mr','Mnr','Dr','Prof');
