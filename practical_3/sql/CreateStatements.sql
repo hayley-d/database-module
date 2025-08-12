@@ -108,11 +108,6 @@ RETURNS TEXT AS $$
   SELECT (p).title::TEXT || ' ' || (p).first_name || ' ' || (p).last_name;
 $$ LANGUAGE sql;
 
-CREATE OR REPLACE FUNCTION personFullNames(p mentor_name)
-RETURNS TEXT AS $$
-  SELECT (p).title::TEXT || ' ' || (p).first_name || ' ' || (p).last_name;
-$$ LANGUAGE sql;
-
 CREATE OR REPLACE FUNCTION ageInYears(dob DATE)
 RETURNS TEXT AS $$
   SELECT EXTRACT(YEAR FROM age(current_date, dob))::INT || ' years';
