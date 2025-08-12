@@ -17,10 +17,10 @@ INSERT INTO full_time_employee (
     provincial_registration
 )
 VALUES
-    ('140010', ROW('Mr','Philipp','du Plessis'), '1999-01-10', 'CAL 113', 2010, ARRAY['NW']),
-    ('140015', ROW('Miss','Hayley','Dodkins'), '1997-05-25', 'CAL 113', 2017, ARRAY['GP','NW']),
-    ('131120', ROW('Mr','John','Doe'), '1997-01-30', 'CAL 113', 2020, ARRAY['FS']),
-    ('131140', ROW('Ms','Jane','Doe'), '1998-02-20', 'CAL 113', 2023, ARRAY['WC']);
+    ('140010', ROW('Mr','Philipp','du Plessis'), '1999-01-10', 'CAL 113', 2010, ARRAY['NW']::provincial_code[]),
+    ('140015', ROW('Miss','Hayley','Dodkins'), '1997-05-25', 'CAL 113', 2017, ARRAY['GP','NW']::provincial_code[]),
+    ('131120', ROW('Mr','John','Doe'), '1997-01-30', 'CAL 113', 2020, ARRAY['FS']::provincial_code[]),
+    ('131140', ROW('Ms','Jane','Doe'), '1998-02-20', 'CAL 113', 2023, ARRAY['WC']::provincial_code[]);
 
 INSERT INTO part_time_employee (
     employee_number,
