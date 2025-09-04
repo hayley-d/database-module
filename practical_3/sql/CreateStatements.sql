@@ -12,7 +12,7 @@ CREATE DOMAIN contract_code AS VARCHAR(7)
   CHECK (VALUE ~ '^[A-Z]{3} [0-9]{3}$');
 
 -- Provincial code enum
-CREATE TYPE provincial_code AS ENUM ('GP','MP','NW','FS','KZN','WC','EC','NC', 'LP');
+CREATE TYPE provincial_code AS ENUM ('GP','MP','NW','FS','KZN','WC','EC','NC', 'LP', 'GC');
 
 -- Title enum
 CREATE TYPE title AS ENUM ('Ms','Mev','Miss','Mrs','Mr','Mnr','Dr','Prof');
@@ -111,38 +111,53 @@ $$ LANGUAGE plpgsql;
 
 -- Functions
 CREATE OR REPLACE FUNCTION personFullNames(p person_name)
-RETURNS TEXT AS $$
-  SELECT (p).title::TEXT || ' ' || (p).first_name || ' ' || (p).last_name;
+RETURNS text AS $$
+BEGIN
+  RETURN (p).title::text || ' ' || (p).first_name || ' ' || (p).last_name;
+END;
 $$ LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE FUNCTION ageInYears(dob DATE)
 RETURNS TEXT AS $$
-  SELECT EXTRACT(YEAR FROM age(current_date, dob))::INT || ' years';
+BEGIN
+  RETURN (EXTRACT(YEAR FROM age(current_date, dob))::int)::text || ' years';
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION isLocatedAt(fte full_time_employee, pcode provincial_code)
 RETURNS BOOLEAN AS $$
-  SELECT pcode = ANY(fte.provincial_registration);
+BEGIN
+  RETURN COALESCE(pcode = ANY(fte.provincial_registration), FALSE);
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION durationOfEmployment(hire_year year)
 RETURNS TEXT AS $$
-  SELECT (EXTRACT(YEAR FROM current_date)::INT - hire_year)::INT || ' years';
+BEGIN
+  RETURN (EXTRACT(YEAR FROM current_date)::int - hire_year)::int || ' years';
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION employee_personFullNames(e employee)
 RETURNS TEXT AS $$
-  SELECT personFullNames(e.full_name);
+BEGIN
+  RETURN personFullNames(e.full_name);
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION employee_ageInYears(e employee)
 RETURNS TEXT AS $$
-  SELECT ageInYears(e.date_of_birth);
+BEGIN
+  RETURN ageInYears(e.date_of_birth);
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION employee_durationOfEmployment(e employee)
 RETURNS TEXT AS $$
-  SELECT durationOfEmployment(e.year_hired);
+BEGIN
+   RETURN durationOfEmployment(e.year_hired);
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE INDEX idx_employee_emp_no ON employee(employee_number);
@@ -150,29 +165,40 @@ CREATE INDEX idx_employee_contract_code ON employee(contract_code);
 CREATE INDEX idx_province_code ON province(provincial_code);
 
 CREATE OR REPLACE FUNCTION isValidProvincialCode(p provincial_code)
-RETURNS boolean LANGUAGE sql AS $$
-  SELECT EXISTS (SELECT 1 FROM province WHERE provincial_code = p)
-$$;
+RETURNS boolean  AS $$
+DECLARE
+  res boolean;
+BEGIN
+  SELECT EXISTS (SELECT 1 FROM province WHERE provincial_code = p) INTO res;
+  RETURN res;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION hasValidProvincialCodes(arr provincial_code[])
 RETURNS boolean AS $$
+BEGIN
   SELECT NOT EXISTS (
     SELECT 1 FROM unnest(arr) c
     WHERE NOT EXISTS (SELECT 1 FROM province p WHERE p.provincial_code = c)
-  )
+  );
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION hasDuplicateProvincialCodes(arr provincial_code[])
 RETURNS boolean AS $$
+BEGIN
   WITH t AS (SELECT unnest(arr) AS c)
   SELECT EXISTS (
     SELECT 1 FROM t GROUP BY c HAVING COUNT(*) > 1
-  )
+  );
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION isValidEmployeeNumber(n employee_number)
 RETURNS boolean AS $$
-  SELECT EXISTS (SELECT 1 FROM employee e WHERE e.employee_number = n)
+BEGIN
+  SELECT EXISTS (SELECT 1 FROM employee e WHERE e.employee_number = n);
+END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION app_deleted_by()
@@ -180,6 +206,59 @@ RETURNS text
 LANGUAGE sql
 AS $$ SELECT current_user $$;
 
+
+CREATE OR REPLACE FUNCTION isLocatedAt(pcode text, provinces text[])
+RETURNS boolean AS $$
+DECLARE
+  c text;
+BEGIN
+  IF array_length(provinces, 1) IS NULL THEN
+    RETURN FALSE;
+  END IF;
+
+  FOREACH c IN ARRAY provinces LOOP
+    IF c IS NOT NULL AND c = pcode THEN
+      RETURN TRUE;
+    END IF;
+  END LOOP;
+
+  RETURN FALSE;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION hasDuplicateProvincialCodes(arr provincial_code[])
+RETURNS boolean AS $$
+DECLARE 
+  has_dup boolean;
+BEGIN
+  SELECT EXISTS (
+    SELECT 1 FROM unnest(arr) AS c
+    GROUP BY c
+    HAVING COUNT(*) > 1
+  )
+  INTO has_dup;
+
+  RETURN COALESCE(has_dup, FALSE);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION hasValidProvincialCodes(arr provincial_code[])
+RETURNS boolean AS $$
+DECLARE 
+  ok boolean;
+BEGIN
+  SELECT NOT EXISTS (
+    SELECT 1
+    FROM unnest(arr) AS c
+    WHERE NOT EXISTS (
+      SELECT 1 FROM province p WHERE p.provincial_code = c
+    )
+  )
+  INTO ok;
+
+  RETURN COALESCE(ok, FALSE);
+END;
+$$ LANGUAGE plpgsql;
 
 -- Trigger Functions
 CREATE OR REPLACE FUNCTION validate_full_time_employee_provincial_registration()
