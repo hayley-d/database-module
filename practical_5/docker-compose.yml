@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  basex:
+    image: quodatum/basexhttp:latest
+    container_name: basex
+    restart: unless-stopped
+    ports:
+      - "8080:8080" 
+      - "1984:1984"  
+    volumes:
+      - basex-data:/srv/basex/data   
+      - ./seed:/seed:ro      
+      - ./setup.bxs:/srv/basex/setup.bxs:ro
+    environment:
+      - SERVER_OPTS= -c /srv/basex/setup.bxs
+volumes:
+  basex-data:
+

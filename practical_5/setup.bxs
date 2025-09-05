@@ -1,0 +1,7 @@
+PASSWORD admin
+
+DROP DB library
+CREATE DB library /seed/library.xml
+
+OPEN library
+

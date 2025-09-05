@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+   <author>
+      <name>J.D. Salinger</name>
+      <books>
+         <book>
+            <title>The Catcher in the Rye</title>
+            <publisher>Little, Brown and Company</publisher>
+            <published_year>1951</published_year>
+            <editions>5</editions>
+         </book>
+         <book>
+            <title>Nine Stories</title>
+            <publisher>Little, Brown and Company</publisher>
+            <published_year>1953</published_year>
+            <editions>3</editions>
+         </book>
+      </books>
+   </author>
+   <author>
+      <name>Harper Lee</name>
+      <books>
+         <book>
+            <title>To Kill a Mockingbird</title>
+            <publisher>HarperCollins</publisher>
+            <published_year>1960</published_year>
+            <editions>6</editions>
+         </book>
+      </books>
+   </author>
+   <author>
+      <name>George Orwell</name>
+      <books>
+         <book>
+            <title>1984</title>
+            <publisher>Penguin Books</publisher>
+            <published_year>1949</published_year>
+            <editions>7</editions>
+         </book>
+      </books>
+   </author>
+   <author>
+      <name>F. Scott Fitzgerald</name>
+      <books>
+         <book>
+            <title>The Great Gatsby</title>
+            <publisher>Charles Scribner's Sons</publisher>
+            <published_year>1925</published_year>
+            <editions>4</editions>
+         </book>
+      </books>
+   </author>
+   <author>
+      <name>Ray Bradbury</name>
+      <books>
+         <book>
+            <title>Fahrenheit 451</title>
+            <publisher>Ballantine Books</publisher>
+            <published_year>1953</published_year>
+            <editions>4</editions>
+         </book>
+      </books>
+   </author>
+   <author>
+      <name>Raymond Chandler</name>
+      <books>
+         <book>
+            <title>The Long Goodbye</title>
+            <publisher>Alfred A. Knopf</publisher>
+            <published_year>1953</published_year>
+            <editions>3</editions>
+         </book>
+      </books>
+   </author>
+</library>
