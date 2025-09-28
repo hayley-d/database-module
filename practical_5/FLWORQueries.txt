@@ -1,50 +1,30 @@
 1.
-```
 for $g in collection("LibraryDB")//genre[name = "Classic"] return $g/author
-```
 
 2.
-```
 for $g in collection("LibraryDB")//genre where $g/name = "Realistic Fiction" return   <genre>     <name>{ $g/name/text() }</name>     <total_count>{ count($g) }</total_count>   </genre>
-```
 
 3.
-```
 for $g in collection("LibraryDB")//genre[author = "George Orwell"] return $g/name
-```
 
 4.
-```
 let $pub := collection("LibraryDB")//book[title = "The Catcher in the Rye"]/publisher for $b in collection("LibraryDB")//book where $b/publisher = $pub return $b/title
-```
 
 5.
-```
 for $g in distinct-values(collection("LibraryDB")//genre/name) let $titles := collection("LibraryDB")//genre[name = $g]/title where count($titles) = 1 return $g
-```
 
 6.
-```
 let $harper-year := min(collection("LibraryDB")//book[../..//name="Harper Lee"]/published_year) for $b in collection("LibraryDB")//book where xs:integer($b/published_year) < xs:integer($harper-year) return $b/title
-```
 
 7.
-```
 let $ed := collection("LibraryDB")//book[title = "Fahrenheit 451"]/editions for $b in collection("LibraryDB")//book where $b/editions = $ed return $b/title
-```
 
 8.
-```
 for $g in collection("LibraryDB")//genre[name = "Classic"] return $g/title
-```
 
 9.
-```
 for $b in collection("LibraryDB")//book where contains($b/publisher, "Books") return $b/title
-```
 
 10.
-```
 let $ed := collection("LibraryDB")//book[title = "Nine Stories"]/editions for $b in collection("LibraryDB")//book where $b/editions = $ed return $b/title
-```
 
