@@ -1,7 +1,9 @@
 PASSWORD admin
 
-DROP DB library
-CREATE DB library /seed/library.xml
+DROP DB LibraryDB
+CREATE DB LibraryDB /seed/Library.xml
+OPEN LibraryDB
+ADD /seed/genre.xml
 
-OPEN library
+OPEN LibraryDB
 
