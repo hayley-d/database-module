@@ -20,7 +20,7 @@ let $pub := collection("LibraryDB")//book[title = "The Catcher in the Rye"]/publ
 
 5.
 ```
-for $g in distinct-values(collection("LibraryDB")//genre/name) let $titles := collection("LibraryDB")//genre[name = $g]/title where count($titles) = 1 return $g
+for $g in distinct-values(collection("LibraryDB")//genre/name) let $titles := collection("LibraryDB")//genre[name = $g]/title where count($titles) = 1 return $g/name
 ```
 
 6.
