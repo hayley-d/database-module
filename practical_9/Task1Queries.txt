@@ -1,0 +1,69 @@
+a)
+    i) 
+        CREATE
+          (thandi:Person {name: "@Thandi", from: "Durban"}),
+          (johan:Person {name: "@Johan", from: "Pretoria"}),
+          (neo:Person {name: "@Neo", from: "Cape Town", age: 22}),
+          (melanie:Person {name: "@Melanie", from: "Joburg", age: 21}),
+          (trees:Post {hashtag: "#Trees", message: "provide oxygen"}),
+          (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"})
+        WITH thandi, johan, neo, melanie, trees, rhinos
+
+        CREATE
+          (thandi)-[:FOLLOWS {since: 2014}]->(johan),
+          (thandi)-[:FOLLOWS {since: 2011}]->(neo),
+          (johan)-[:FOLLOWS {since: 2012}]->(thandi),
+          (neo)-[:FOLLOWS {since: 2016}]->(thandi),
+          (neo)-[:FOLLOWS {since: 2016}]->(melanie),
+          (melanie)-[:FOLLOWS {since: 2012}]->(johan),
+          (melanie)-[:FOLLOWS {since: 2012}]->(thandi),
+
+     ii) MATCH (p)-[r]->(q) RETURN p,r,q;
+
+    iii) 
+        CREATE
+          (trees:Post {hashtag: "#Trees", message: "provide oxygen"}),
+          (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"})
+        WITH trees, rhinos
+
+        CREATE
+          (thandi)-[:POSTED {date: date("2023-08-20")}]->(trees),
+          (johan)-[:REPOSTED {date: date("2023-08-20")}]->(trees),
+          (neo)-[:POSTED {date: date("2023-09-05")}]->(rhinos),
+          (melanie)-[:LIKED {date: date("2023-09-05")}]->(rhinos);
+
+    iv) MATCH (p)-[r]->(q) RETURN p,r,q;
+
+b)
+    i) 
+        MATCH (n)
+        RETURN DISTINCT labels(n) AS labels;
+
+    ii)
+        MATCH (p:Person)
+        RETURN p.name AS Name
+        ORDER BY p.name ASC;
+
+    iii)
+        MATCH (post:Post)
+        RETURN post.hashtag AS Hashtag
+        ORDER BY post.hashtag ASC;
+
+    iv)
+        MATCH ()-[r]->()
+        RETURN DISTINCT type(r) AS RelationshipType;
+
+    v)
+        MATCH (p:Person)-[:POSTED]->(post:Post)
+        RETURN p.name AS Person, post.hashtag AS Hashtag, post.message AS Message
+        ORDER BY p.name;
+
+    vi)
+        MATCH (:Person)-[:REPOSTED]->(post:Post)
+        RETURN DISTINCT post.hashtag AS Hashtag, post.message AS Message
+        ORDER BY post.hashtag;
+
+    vii)
+        MATCH (:Person)-[:LIKED]->(post:Post)
+        RETURN DISTINCT post.hashtag AS Hashtag, post.message AS Message
+        ORDER BY post.hashtag;

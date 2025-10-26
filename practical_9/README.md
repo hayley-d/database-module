@@ -100,4 +100,61 @@ RETURN DISTINCT post.hashtag AS Hashtag, post.message AS Message
 ORDER BY post.hashtag;
 ```
 
+#### Find the posts that are 1 or 2 links away from the Person Neo
+```
+MATCH (n:Person {name:"@Neo"})-[:FOLLOWS|POSTED|REPOSTED|LIKED*1..2]->(post:Post)
+RETURN DISTINCT post.hashtag AS Hashtag, post.message AS Message;
+```
+
+#### Show the nodes in the path from Melanie to Neo
+```
+MATCH path = shortestPath((melanie:Person {name:"@Melanie"})-[*]-(neo:Person {name:"@Neo"}))
+RETURN path;
+```
+
+#### For each person who has posted, provide a report to show if thier post has been reposted.
+```
+MATCH (p:Person)-[:POSTED]->(post:Post)
+OPTIONAL MATCH (:Person)-[r:REPOSTED]->(post)
+WITH p.name AS Person, post.hashtag AS Hashtag, COUNT(r) > 0 AS HasBeenReposted
+RETURN Person, Hashtag, HasBeenReposted
+ORDER BY Person;
+```
+
+#### Find the shortest follows path from Melanie to Neo
+```
+MATCH path = shortestPath((melanie:Person {name:"@Melanie"})-[:FOLLOWS*]->(neo:Person {name:"@Neo"}))
+RETURN path;
+```
+
+#### Count the number of nodes in the network
+```
+MATCH (n)
+RETURN COUNT(n) AS TotalNodes;
+```
+
+#### For each person, count the number of persons they follow
+```
+MATCH (p:Person)-[:FOLLOWS]->(other:Person)
+RETURN p.name AS Person, COUNT(other) AS FollowsCount
+ORDER BY FollowsCount DESC;
+```
+
+#### For each person count the number of people that have been following them since 2014
+```
+MATCH (follower:Person)-[r:FOLLOWS]->(followed:Person)
+WHERE r.since = 2014
+RETURN followed.name AS Person, COUNT(follower) AS FollowersSince2014
+ORDER BY FollowersSince2014 DESC;
+```
+
+#### Show the name and number of followers for the person with the most followers
+```
+MATCH (follower:Person)-[:FOLLOWS]->(followed:Person)
+WITH followed.name AS Person, COUNT(follower) AS Followers
+ORDER BY Followers DESC
+LIMIT 1
+RETURN Person, Followers;
+```
+
 
