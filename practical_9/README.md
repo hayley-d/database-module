@@ -23,35 +23,60 @@ testpassword
 MATCH (n) RETURN n;
 ```
 
-### Create Clauses
+### Delete
 ```
-CREATE
-  (thandi:Person {name: "@Thandi", from: "Durban"}),
-  (johan:Person {name: "@Johan", from: "Pretoria"}),
-  (neo:Person {name: "@Neo", from: "Cape Town", age: 22}),
-  (melanie:Person {name: "@Melanie", from: "Joburg", age: 21}),
-  (trees:Post {hashtag: "#Trees", message: "provide oxygen"}),
-  (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"})
-WITH thandi, johan, neo, melanie, trees, rhinos
-
-CREATE
-  (thandi)-[:FOLLOWS {since: 2014}]->(johan),
-  (thandi)-[:FOLLOWS {since: 2011}]->(neo),
-  (thandi)-[:POSTED {date: date("2023-08-20")}]->(trees),
-  (johan)-[:FOLLOWS {since: 2012}]->(thandi),
-  (johan)-[:REPOSTED {date: date("2023-08-20")}]->(trees),
-  (neo)-[:FOLLOWS {since: 2016}]->(thandi),
-  (neo)-[:FOLLOWS {since: 2016}]->(melanie),
-  (neo)-[:POSTED {date: date("2023-09-05")}]->(rhinos),
-  (melanie)-[:FOLLOWS {since: 2012}]->(johan),
-  (melanie)-[:FOLLOWS {since: 2012}]->(thandi),
-  (melanie)-[:LIKED {date: date("2023-09-05")}]->(rhinos);
+MATCH (n) DETACH DELETE n;
 ```
 
 ### Show Current Nodes
 ```
 MATCH (p)-[r]->(q) RETURN p,r,q;
 ```
+
+#### Create People and Relationships
+```
+CREATE
+  (thandi:Person {name: "@Thandi", from: "Durban"}),
+  (johan:Person {name: "@Johan", from: "Pretoria"}),
+  (neo:Person {name: "@Neo", from: "Cape Town", age: 22}),
+  (melanie:Person {name: "@Melanie", from: "Joburg", age: 21});
+
+MATCH
+  (thandi:Person {name:"@Thandi"}),
+  (johan:Person {name:"@Johan"}),
+  (neo:Person {name:"@Neo"}),
+  (melanie:Person {name:"@Melanie"})
+CREATE
+  (thandi)-[:FOLLOWS {since: 2014}]->(johan),
+  (thandi)-[:FOLLOWS {since: 2011}]->(neo),
+  (johan)-[:FOLLOWS {since: 2012}]->(thandi),
+  (neo)-[:FOLLOWS {since: 2016}]->(thandi),
+  (neo)-[:FOLLOWS {since: 2016}]->(melanie),
+  (melanie)-[:FOLLOWS {since: 2012}]->(johan),
+  (melanie)-[:FOLLOWS {since: 2012}]->(thandi);
+```
+
+#### Create Posts 
+```
+CREATE
+  (trees:Post {hashtag: "#Trees", message: "provide oxygen"}),
+  (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"});
+
+MATCH
+  (thandi:Person {name:"@Thandi"}),
+  (johan:Person {name:"@Johan"}),
+  (neo:Person {name:"@Neo"}),
+  (melanie:Person {name:"@Melanie"}),
+  (trees:Post {hashtag:"#Trees"}),
+  (rhinos:Post {hashtag:"#Rhinos"})
+CREATE
+  (thandi)-[:POSTED {date: date("2023-08-20")}]->(trees),
+  (johan)-[:REPOSTED {date: date("2023-08-20")}]->(trees),
+  (neo)-[:POSTED {date: date("2023-09-05")}]->(rhinos),
+  (melanie)-[:LIKED {date: date("2023-09-05")}]->(rhinos);
+
+```
+
 
 #### List all the node labels:
 ```

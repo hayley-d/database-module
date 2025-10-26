@@ -4,11 +4,13 @@ a)
           (thandi:Person {name: "@Thandi", from: "Durban"}),
           (johan:Person {name: "@Johan", from: "Pretoria"}),
           (neo:Person {name: "@Neo", from: "Cape Town", age: 22}),
-          (melanie:Person {name: "@Melanie", from: "Joburg", age: 21}),
-          (trees:Post {hashtag: "#Trees", message: "provide oxygen"}),
-          (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"})
-        WITH thandi, johan, neo, melanie, trees, rhinos
+          (melanie:Person {name: "@Melanie", from: "Joburg", age: 21});
 
+        MATCH
+          (thandi:Person {name:"@Thandi"}),
+          (johan:Person {name:"@Johan"}),
+          (neo:Person {name:"@Neo"}),
+          (melanie:Person {name:"@Melanie"})
         CREATE
           (thandi)-[:FOLLOWS {since: 2014}]->(johan),
           (thandi)-[:FOLLOWS {since: 2011}]->(neo),
@@ -16,16 +18,22 @@ a)
           (neo)-[:FOLLOWS {since: 2016}]->(thandi),
           (neo)-[:FOLLOWS {since: 2016}]->(melanie),
           (melanie)-[:FOLLOWS {since: 2012}]->(johan),
-          (melanie)-[:FOLLOWS {since: 2012}]->(thandi),
+          (melanie)-[:FOLLOWS {since: 2012}]->(thandi);
 
      ii) MATCH (p)-[r]->(q) RETURN p,r,q;
 
     iii) 
-        CREATE
+       CREATE
           (trees:Post {hashtag: "#Trees", message: "provide oxygen"}),
-          (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"})
-        WITH trees, rhinos
+          (rhinos:Post {hashtag: "#Rhinos", message: "are innocent"});
 
+        MATCH
+          (thandi:Person {name:"@Thandi"}),
+          (johan:Person {name:"@Johan"}),
+          (neo:Person {name:"@Neo"}),
+          (melanie:Person {name:"@Melanie"}),
+          (trees:Post {hashtag:"#Trees"}),
+          (rhinos:Post {hashtag:"#Rhinos"})
         CREATE
           (thandi)-[:POSTED {date: date("2023-08-20")}]->(trees),
           (johan)-[:REPOSTED {date: date("2023-08-20")}]->(trees),
